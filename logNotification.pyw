@@ -59,7 +59,12 @@ if __name__ == '__main__':
         with oracledb.connect(user=DB_UN, password=DB_PW, dsn=DB_CS) as con:
             with con.cursor() as cur:  # start an entry cursor
                 today = datetime.now()
-                yesterday = today - timedelta(days = 1)
+                today = today.replace(hour=0, minute=0, second=0, microsecond=0)  # set the time to midnight, as all log entries have just midnight time stamps besides the date.
+                print(f'DBUG: Todays datecode without time is {today}') 
+                print(f'DBUG: Todays datecode without time is {today}', file=log)
+                timeframe = today - timedelta(days = 1)  # since we run it first thing in the morning we need to select the previous day, if you are running at the end of the day you wouldnt want to do this
+                print(f'DBUG: Checking for log entries since {timeframe}')
+                print(f'DBUG: Checking for log entries since {timeframe}', file=log)
                 cur.execute('SELECT stu.student_number, stu.id, stu.first_name, stu.last_name, ext.casemanager, ext.case_manager_email FROM STUDENTS stu LEFT JOIN u_def_ext_students0 ext ON stu.dcid = ext.studentsdcid WHERE ext.casemanager IS NOT NULL AND stu.enroll_status = 0')
                 students = cur.fetchall()
                 for student in students:  # go through each student one at a time
@@ -72,7 +77,7 @@ if __name__ == '__main__':
                         caseManager = str(student[4])
                         caseManagerEmail = str(student[5]) if student[5] else None
 
-                        cur.execute('SELECT entry_author, entry, logtypeid, discipline_incidentdate, dcid FROM LOG WHERE studentid = :student AND entry_date > :timeframe', student=stuID, timeframe=yesterday)
+                        cur.execute('SELECT entry_author, entry, logtypeid, discipline_incidentdate, dcid FROM LOG WHERE studentid = :student AND entry_date > :timeframe', student=stuID, timeframe=timeframe)
                         entries = cur.fetchall()
                         for entry in entries:
                             try:
