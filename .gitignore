@@ -1,0 +1,4 @@
+.venv/
+*.json
+ruff.toml
+log_notifications_log.txt
