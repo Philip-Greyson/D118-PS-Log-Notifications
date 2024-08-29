@@ -77,7 +77,7 @@ if __name__ == '__main__':
                         caseManager = str(student[4])
                         caseManagerEmail = str(student[5]) if student[5] else None
 
-                        cur.execute('SELECT entry_author, entry, logtypeid, discipline_incidentdate, dcid FROM LOG WHERE studentid = :student AND entry_date > :timeframe', student=stuID, timeframe=timeframe)
+                        cur.execute('SELECT entry_author, entry, logtypeid, discipline_incidentdate, dcid FROM LOG WHERE studentid = :student AND entry_date >= :timeframe', student=stuID, timeframe=timeframe)
                         entries = cur.fetchall()
                         for entry in entries:
                             try:
